@@ -21,3 +21,4 @@ plot(hclust(dist(m)),hang = -1,xlab = 'Samples',main='Classification tree')
 pca=prcomp(m)
 summary(pca)
 plot(pca$x[,1],pca$x[,2],pch=19,cex=3,main='Principal complnent analysis',xlab='PC 1',ylab='PC 2')
+
