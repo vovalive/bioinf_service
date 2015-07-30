@@ -12,6 +12,10 @@ shinyUI(pageWithSidebar(
   # Application title
   headerPanel("Random data heatmap tree and pca"),
   
+  ###file
+  
+  ####
+  
   # Sidebar with a slider input for number of bins
   sidebarPanel(
     sliderInput("bins",
@@ -28,14 +32,39 @@ shinyUI(pageWithSidebar(
                 "Features number:",
                 min = 5,
                 max = 25,
-                value = 15)
+                value = 15),
+    tags$hr(),
+    fileInput('file1', 'You can choose file to upload',
+              accept = c(
+                'text/csv',
+                'text/comma-separated-values',
+                'text/tab-separated-values',
+                'text/plain',
+                '.csv',
+                '.tsv'
+              )
+    ),
+    tags$hr(),
+    checkboxInput('header', 'Header', TRUE),
+    radioButtons('sep', 'Separator',
+                 c(Comma=',',
+                   Semicolon=';',
+                   Tab='\t'),
+                 ','),
+    radioButtons('quote', 'Quote',
+                 c(None='',
+                   'Double Quote'='"',
+                   'Single Quote'="'"),
+                 '"')
   ),
  
   
   # Show a plot of the generated distribution
   mainPanel(
+    tableOutput('contents'),
     plotOutput("heatmap"),
     plotOutput("tree"),
-    plotOutput("pca")
+    plotOutput("pca"),
+    tableOutput('pcatable')
   )
 ))
