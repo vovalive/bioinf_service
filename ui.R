@@ -61,9 +61,15 @@ shinyUI(pageWithSidebar(
   
   # Show a plot of the generated distribution
   mainPanel(
+    p("Изначально все графики строятся на случайных данных, но можно загрузить свои собственные - главное чтобы в левом верхнем углу было слово name, под ним названия генов или белков"),
+    img(src='helper_sm.jpg', align = "center"),
+    tags$hr(),
     tableOutput('contents'),
+    tags$hr(),
     plotOutput("heatmap"),
+    tags$hr(),
     plotOutput("tree"),
+    tags$hr(),
     plotOutput("pca"),
     tableOutput('pcatable')
   )

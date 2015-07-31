@@ -12,10 +12,7 @@ rm(list = ls(all=T))
 library(ggplot2)
 library(gplots)
 library(RColorBrewer)
-library(ggvis)
-##
-
-##data generation
+#library(ggvis)
 
 ##
 brewercol=rev(brewer.pal(n = 9,name = 'Spectral'))
@@ -32,9 +29,11 @@ shinyServer(function(input, output) {
     if (is.null(inFile))
       m=matrix(rnorm(n = input$nsamples*20,mean = 5,sd = .1), ncol=input$nsamples,nrow=input$nfeatures)
     else
-      m=read.csv(inFile$datapath, header = input$header,
-                 sep = input$sep, quote = input$quote)
-    heatmap.2(data.matrix(m),trace='none',col = brewercol,xlab = 'Samples',ylab = 'Features',key=T,main='Heatmap')
+      {m=read.table(inFile$datapath, header = input$header,sep = input$sep, quote = input$quote)
+      row.names(m)=paste(m$name,seq(1:nrow(m)),sep='.')
+      m$name=NULL
+      m=data.matrix(m)}
+    heatmap.2(m,trace='none',col = brewercol,xlab = 'Samples',ylab = 'Features',key=T,main='Heatmap')
       })
   
   output$tree <- renderPlot({
@@ -43,8 +42,10 @@ shinyServer(function(input, output) {
     if (is.null(inFile))
       m=matrix(rnorm(n = input$nsamples*20,mean = 5,sd = .1), ncol=input$nsamples,nrow=input$nfeatures)
     else
-      m=read.csv(inFile$datapath, header = input$header,
-                 sep = input$sep, quote = input$quote)
+      {m=read.table(inFile$datapath, header = input$header,sep = input$sep, quote = input$quote)
+       row.names(m)=paste(m$name,seq(1:nrow(m)),sep='.')
+       m$name=NULL
+       m=data.matrix(m)}
     plot(hclust(dist(m)),hang = -1,xlab = 'Samples',main='Classification tree')
   })
   
@@ -54,8 +55,10 @@ shinyServer(function(input, output) {
     if (is.null(inFile))
       m=matrix(rnorm(n = input$nsamples*20,mean = 5,sd = .1), ncol=input$nsamples,nrow=input$nfeatures)
     else
-      m=read.csv(inFile$datapath, header = input$header,
-                 sep = input$sep, quote = input$quote)
+      {m=read.table(inFile$datapath, header = input$header,sep = input$sep, quote = input$quote)
+       row.names(m)=paste(m$name,seq(1:nrow(m)),sep='.')
+       m$name=NULL
+       m=data.matrix(m)}
     pca=prcomp(m)
     summary(pca)
     plot(pca$x[,1],pca$x[,2],pch=19,cex=3,main='Principal complnent analysis',xlab='PC 1',ylab='PC 2')
@@ -73,8 +76,10 @@ shinyServer(function(input, output) {
     if (is.null(inFile))
       return(NULL)
     
-    m=read.csv(inFile$datapath, header = input$header,
-             sep = input$sep, quote = input$quote)
+    {m=read.table(inFile$datapath, header = input$header,sep = input$sep, quote = input$quote)
+     row.names(m)=paste(m$name,seq(1:nrow(m)),sep='.')
+     m$name=NULL
+     m=data.matrix(m)}
     m
   })
   
@@ -84,8 +89,10 @@ shinyServer(function(input, output) {
     if (is.null(inFile))
       m=matrix(rnorm(n = input$nsamples*20,mean = 5,sd = .1), ncol=input$nsamples,nrow=input$nfeatures)
     else
-      m=read.csv(inFile$datapath, header = input$header,
-                 sep = input$sep, quote = input$quote)
+      {m=read.table(inFile$datapath, header = input$header,sep = input$sep, quote = input$quote)
+       row.names(m)=paste(m$name,seq(1:nrow(m)),sep='.')
+       m$name=NULL
+       m=data.matrix(m)}
     pca=prcomp(m)
     summary(pca)
   })
