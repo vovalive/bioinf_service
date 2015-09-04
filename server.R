@@ -7,7 +7,7 @@
 
 library(shiny)
 rm(list = ls(all=T))
-
+# dev.off()
 ##libs
 library(ggplot2)
 library(gplots)
@@ -35,6 +35,43 @@ shinyServer(function(input, output) {
       m=data.matrix(m)}
     heatmap.2(m,trace='none',col = brewercol,xlab = 'Samples',ylab = 'Features',key=T,main='Heatmap')
       })
+  output$downloadHeatmap.png <- downloadHandler(
+    filename = "heatmap.png",
+    content = function(file) {
+      png(file)
+      output$heatmap <- renderPlot({
+        set.seed(input$bins)
+        inFile <- input$file1
+        if (is.null(inFile))
+          m=matrix(rnorm(n = input$nsamples*20,mean = 5,sd = .1), ncol=input$nsamples,nrow=input$nfeatures)
+        else
+        {m=read.table(inFile$datapath, header = input$header,sep = input$sep, quote = input$quote)
+        row.names(m)=paste(m$name,seq(1:nrow(m)),sep='.')
+        m$name=NULL
+        m=data.matrix(m)}
+        heatmap.2(m,trace='none',col = brewercol,xlab = 'Samples',ylab = 'Features',key=T,main='Heatmap')
+      })
+      dev.off()
+    })   
+  output$downloadHeatmap.pdf <- downloadHandler(
+    filename = "heatmap.pdf",
+    content = function(file) {
+      pdf(
+      output$heatmap <- renderPlot({
+        set.seed(input$bins)
+        inFile <- input$file1
+        if (is.null(inFile))
+          m=matrix(rnorm(n = input$nsamples*20,mean = 5,sd = .1), ncol=input$nsamples,nrow=input$nfeatures)
+        else
+        {m=read.table(inFile$datapath, header = input$header,sep = input$sep, quote = input$quote)
+        row.names(m)=paste(m$name,seq(1:nrow(m)),sep='.')
+        m$name=NULL
+        m=data.matrix(m)}
+        heatmap.2(m,trace='none',col = brewercol,xlab = 'Samples',ylab = 'Features',key=T,main='Heatmap')
+      }))
+      dev.off()
+    })   
+  
   
   output$tree <- renderPlot({
     set.seed(input$bins)
