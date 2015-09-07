@@ -39,41 +39,17 @@ shinyServer(function(input, output) {
     filename = "heatmap.png",
     content = function(file) {
       png(file)
-      output$heatmap <- renderPlot({
-        set.seed(input$bins)
-        inFile <- input$file1
-        if (is.null(inFile))
-          m=matrix(rnorm(n = input$nsamples*20,mean = 5,sd = .1), ncol=input$nsamples,nrow=input$nfeatures)
-        else
-        {m=read.table(inFile$datapath, header = input$header,sep = input$sep, quote = input$quote)
-        row.names(m)=paste(m$name,seq(1:nrow(m)),sep='.')
-        m$name=NULL
-        m=data.matrix(m)}
-        heatmap.2(m,trace='none',col = brewercol,xlab = 'Samples',ylab = 'Features',key=T,main='Heatmap')
-      })
+      heatmap.2(x=data.matrix(read.table(input$file1$datapath, header = input$header,sep = input$sep, quote = input$quote)),trace='none',col = brewercol,xlab = 'Samples',ylab = 'Features',key=T,main='Heatmap')
       dev.off()
-    })   
+    })  
   output$downloadHeatmap.pdf <- downloadHandler(
-    filename = "heatmap.pdf",
+    filename = "heatmap.png",
     content = function(file) {
-      pdf(
-      output$heatmap <- renderPlot({
-        set.seed(input$bins)
-        inFile <- input$file1
-        if (is.null(inFile))
-          m=matrix(rnorm(n = input$nsamples*20,mean = 5,sd = .1), ncol=input$nsamples,nrow=input$nfeatures)
-        else
-        {m=read.table(inFile$datapath, header = input$header,sep = input$sep, quote = input$quote)
-        row.names(m)=paste(m$name,seq(1:nrow(m)),sep='.')
-        m$name=NULL
-        m=data.matrix(m)}
-        heatmap.2(m,trace='none',col = brewercol,xlab = 'Samples',ylab = 'Features',key=T,main='Heatmap')
-      }))
+      pdf(file)
+      heatmap.2(x=data.matrix(read.table(input$file1$datapath, header = input$header,sep = input$sep, quote = input$quote)),trace='none',col = brewercol,xlab = 'Samples',ylab = 'Features',key=T,main='Heatmap')
       dev.off()
     })   
-  
-  
-  output$tree <- renderPlot({
+    output$tree <- renderPlot({
     set.seed(input$bins)
     inFile <- input$file1
     if (is.null(inFile))
@@ -86,6 +62,21 @@ shinyServer(function(input, output) {
     plot(hclust(dist(m)),hang = -1,xlab = 'Samples',main='Classification tree')
   })
   
+    output$downloadTree.png <- downloadHandler(
+      filename = "tree.png",
+      content = function(file) {
+        png(file)
+        plot(hclust(dist(read.table(input$file1$datapath, header = input$header,sep = input$sep, quote = input$quote))),hang = -1,xlab = 'Samples',main='Classification tree')
+        dev.off()
+      })  
+    output$downloadTree.pdf <- downloadHandler(
+      filename = "tree.png",
+      content = function(file) {
+        pdf(file)
+        plot(hclust(dist(read.table(input$file1$datapath, header = input$header,sep = input$sep, quote = input$quote))),hang = -1,xlab = 'Samples',main='Classification tree')
+        dev.off()
+      })   
+    
   output$pca <- renderPlot({
     set.seed(input$bins)
     inFile <- input$file1
@@ -100,6 +91,21 @@ shinyServer(function(input, output) {
     summary(pca)
     plot(pca$x[,1],pca$x[,2],pch=19,cex=3,main='Principal complnent analysis',xlab='PC 1',ylab='PC 2')
   })
+  
+  output$downloadPca.png <- downloadHandler(
+    filename = "pca.png",
+    content = function(file) {
+      png(file)
+      plot(prcomp(read.table(input$file1$datapath, header = input$header,sep = input$sep, quote = input$quote))$x[,1],prcomp(read.table(input$file1$datapath, header = input$header,sep = input$sep, quote = input$quote))$x[,2],pch=19,cex=3,main='Principal complnent analysis',xlab='PC 1',ylab='PC 2')
+      dev.off()
+    })  
+  output$downloadPca.pdf <- downloadHandler(
+    filename = "pca.png",
+    content = function(file) {
+      pdf(file)
+      plot(prcomp(read.table(input$file1$datapath, header = input$header,sep = input$sep, quote = input$quote))$x[,1],prcomp(read.table(input$file1$datapath, header = input$header,sep = input$sep, quote = input$quote))$x[,2],pch=19,cex=3,main='Principal complnent analysis',xlab='PC 1',ylab='PC 2')
+      dev.off()
+    })  
   
   output$contents <- renderTable({
     # input$file1 will be NULL initially. After the user selects
