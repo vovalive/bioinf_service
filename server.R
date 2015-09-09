@@ -7,7 +7,7 @@
 
 library(shiny)
 rm(list = ls(all=T))
-
+# dev.off()
 ##libs
 library(ggplot2)
 library(gplots)
@@ -35,8 +35,30 @@ shinyServer(function(input, output) {
       m=data.matrix(m)}
     heatmap.2(m,trace='none',col = brewercol,xlab = 'Samples',ylab = 'Features',key=T,main='Heatmap')
       })
-  
-  output$tree <- renderPlot({
+  output$downloadHeatmap.png <- downloadHandler(
+    filename = "heatmap.png",
+    content = function(file) {
+      png(file)
+      if (is.null(input$file1)){
+        set.seed(input$bins)
+        heatmap.2(x=matrix(rnorm(n = input$nsamples*20,mean = 5,sd = .1), ncol=input$nsamples,nrow=input$nfeatures),trace='none',col = brewercol,xlab = 'Samples',ylab = 'Features',key=T,main='Heatmap') }
+        else{
+      heatmap.2(x=data.matrix(read.table(input$file1$datapath, header = input$header,sep = input$sep, quote = input$quote)),trace='none',col = brewercol,xlab = 'Samples',ylab = 'Features',key=T,main='Heatmap')}
+      dev.off()
+    })  
+  output$downloadHeatmap.pdf <- downloadHandler(
+    filename = "heatmap.png",
+    content = function(file) {
+      pdf(file)
+      if (is.null(input$file1)){
+        set.seed(input$bins)
+        heatmap.2(x=matrix(rnorm(n = input$nsamples*20,mean = 5,sd = .1), ncol=input$nsamples,nrow=input$nfeatures),trace='none',col = brewercol,xlab = 'Samples',ylab = 'Features',key=T,main='Heatmap')}
+        else{
+      heatmap.2(x=data.matrix(read.table(input$file1$datapath, header = input$header,sep = input$sep, quote = input$quote)),trace='none',col = brewercol,xlab = 'Samples',ylab = 'Features',key=T,main='Heatmap')}
+      dev.off()
+    }
+    )   
+    output$tree <- renderPlot({
     set.seed(input$bins)
     inFile <- input$file1
     if (is.null(inFile))
@@ -49,6 +71,29 @@ shinyServer(function(input, output) {
     plot(hclust(dist(m)),hang = -1,xlab = 'Samples',main='Classification tree')
   })
   
+    output$downloadTree.png <- downloadHandler(
+      filename = "tree.png",
+      content = function(file) {
+        png(file)
+        if (is.null(input$file1)){
+          set.seed(input$bins)
+          plot(hclust(dist(matrix(rnorm(n = input$nsamples*20,mean = 5,sd = .1), ncol=input$nsamples,nrow=input$nfeatures))),hang = -1,xlab = 'Samples',main='Classification tree')}
+          else{
+        plot(hclust(dist(read.table(input$file1$datapath, header = input$header,sep = input$sep, quote = input$quote))),hang = -1,xlab = 'Samples',main='Classification tree')}
+        dev.off()
+      })  
+    output$downloadTree.pdf <- downloadHandler(
+      filename = "tree.png",
+      content = function(file) {
+        pdf(file)
+        if (is.null(input$file1)){
+          set.seed(input$bins)
+          plot(hclust(dist(matrix(rnorm(n = input$nsamples*20,mean = 5,sd = .1), ncol=input$nsamples,nrow=input$nfeatures))),hang = -1,xlab = 'Samples',main='Classification tree')}
+          else{
+        plot(hclust(dist(read.table(input$file1$datapath, header = input$header,sep = input$sep, quote = input$quote))),hang = -1,xlab = 'Samples',main='Classification tree')}
+        dev.off()
+      })   
+    
   output$pca <- renderPlot({
     set.seed(input$bins)
     inFile <- input$file1
@@ -64,6 +109,30 @@ shinyServer(function(input, output) {
     plot(pca$x[,1],pca$x[,2],pch=19,cex=3,main='Principal complnent analysis',xlab='PC 1',ylab='PC 2')
   })
   
+  output$downloadPca.png <- downloadHandler(
+    filename = "pca.png",
+    content = function(file) {
+      png(file)
+      if (is.null(input$file1)){
+        set.seed(input$bins)
+        m<-prcomp(matrix(rnorm(n = input$nsamples*20,mean = 5,sd = .1), ncol=input$nsamples,nrow=input$nfeatures))
+        plot(m$x[,1],m$x[,2],pch=19,cex=3,main='Principal complnent analysis',xlab='PC 1',ylab='PC 2')}
+        else{
+      plot(m$x[,1],m$x[,2],pch=19,cex=3,main='Principal complnent analysis',xlab='PC 1',ylab='PC 2')}
+      dev.off()
+    })  
+  output$downloadPca.pdf <- downloadHandler(
+    filename = "pca.png",
+    content = function(file) {
+      pdf(file)
+      if (is.null(input$file1)){
+        set.seed(input$bins)
+        plot(prcomp(read.table(input$file1$datapath, header = input$header,sep = input$sep, quote = input$quote))$x[,1],prcomp(read.table(input$file1$datapath, header = input$header,sep = input$sep, quote = input$quote))$x[,2],pch=19,cex=3,main='Principal complnent analysis',xlab='PC 1',ylab='PC 2')}
+        else{
+      plot(prcomp(read.table(input$file1$datapath, header = input$header,sep = input$sep, quote = input$quote))$x[,1],prcomp(read.table(input$file1$datapath, header = input$header,sep = input$sep, quote = input$quote))$x[,2],pch=19,cex=3,main='Principal complnent analysis',xlab='PC 1',ylab='PC 2')}
+      dev.off()
+    })  
+  
   output$contents <- renderTable({
     # input$file1 will be NULL initially. After the user selects
     # and uploads a file, it will be a data frame with 'name',
@@ -75,7 +144,7 @@ shinyServer(function(input, output) {
     
     if (is.null(inFile))
       return(NULL)
-    
+    else
     {m=read.table(inFile$datapath, header = input$header,sep = input$sep, quote = input$quote)
      row.names(m)=paste(m$name,seq(1:nrow(m)),sep='.')
      m$name=NULL

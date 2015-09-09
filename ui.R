@@ -67,10 +67,16 @@ shinyUI(pageWithSidebar(
     tableOutput('contents'),
     tags$hr(),
     plotOutput("heatmap"),
+    downloadButton('downloadHeatmap.png', 'Скачать в формате png'),
+    downloadButton('downloadHeatmap.pdf', 'Скачать в формате pdf'),
     tags$hr(),
     plotOutput("tree"),
+    downloadButton('downloadTree.png', 'Скачать в формате png'),
+    downloadButton('downloadTree.pdf', 'Скачать в формате pdf'),
     tags$hr(),
     plotOutput("pca"),
+    downloadButton('downloadPca.png', 'Скачать в формате png'),
+    downloadButton('downloadPca.pdf', 'Скачать в формате pdf'),
     tableOutput('pcatable')
   )
 ))
